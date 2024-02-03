@@ -1,4 +1,4 @@
-name: 'Base64 to file'
+name: 'Base64 hash to file'
 description: 'Reads a base64 encoded content into a file'
 author: 'Dzhunet Hasan'
 branding:
