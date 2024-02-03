@@ -1,19 +1,40 @@
-name: 'The name of your action here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Base64 to file'
+description: 'Reads a base64 encoded content into a file'
+author: 'Dzhunet Hasan'
+branding:
+  icon: 'settings'
+  color: 'white'
 
-# Define your inputs here.
 inputs:
-  milliseconds:
-    description: 'Your input description here'
+  encodedString:  
+    description: 'The base64 encoded string'
     required: true
-    default: '1000'
+  destinationFileName:  
+    description: 'Name of the file when written to temp location'
+    required: true 
+  destinationPath:  
+    description: 'If it is set, change the output location to specific one from temp location.'
+    required: true
 
-# Define your outputs here.
+
 outputs:
-  time:
-    description: 'Your output description here'
+  filePath:
+    description: 'The created temp file location'
 
 runs:
-  using: node20
-  main: dist/index.js
+  using: "composite"
+  steps:
+    - run: echo ${{ inputs.encodedString }} > ./${{ inputs.destinationFileName }}.tmp
+      shell: bash
+    - run: base64 -d -i ./${{ inputs.destinationFileName }}.tmp > ./${{ inputs.destinationFileName }}
+      shell: bash
+    - run: rm ./${{ inputs.destinationFileName }}.tmp
+      shell: bash
+    - run: mkdir -p ${{ inputs.destinationPath }}
+      shell: bash
+    - run: |
+        DESTINATION_FILE=${{ inputs.destinationPath }}/${{ inputs.destinationFileName }}
+        mv ./${{ inputs.destinationFileName }} ${{ inputs.destinationPath }}
+        echo "filePath=$DESTINATION_FILE" >> "$GITHUB_OUTPUT"
+        echo Base64 file generated as $DESTINATION_FILE
+      shell: bash

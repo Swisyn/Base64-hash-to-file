@@ -1,80 +1,40 @@
-# Create a JavaScript Action
+# Base64 to File
 
-[![GitHub Super-Linter](https://github.com/actions/javascript-action/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
-![CI](https://github.com/actions/javascript-action/actions/workflows/ci.yml/badge.svg)
+Utilize this action if you need to retrieve a file from a base64-encoded string that you may be storing in Secrets or elsewhere. This can be useful for certificate signing and storing the base64 cert in the Secrets.
 
-Use this template to bootstrap the creation of a JavaScript action. :rocket:
-
-This template includes compilation support, tests, a validation workflow,
-publishing, and versioning guidance.
-
-If you are new, there's also a simpler introduction in the
-[Hello world JavaScript action repository](https://github.com/actions/hello-world-javascript-action).
-
-## Create Your Own Action
-
-To create your own action, you can use this repository as a template! Just
-follow the below instructions:
-
-1. Click the **Use this template** button at the top of the repository
-1. Select **Create a new repository**
-1. Select an owner and name for your new repository
-1. Click **Create repository**
-1. Clone your new repository
-
-> [!IMPORTANT]
->
-> Make sure to remove or update the [`CODEOWNERS`](./CODEOWNERS) file! For
-> details on how to use this file, see
-> [About code owners](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners).
-
-## Initial Setup
-
-After you've cloned the repository to your local machine or codespace, you'll
-need to perform some initial setup steps before you can develop your action.
-
-> [!NOTE]
->
-> You'll need to have a reasonably modern version of
-> [Node.js](https://nodejs.org) handy. If you are using a version manager like
-> [`nodenv`](https://github.com/nodenv/nodenv) or
-> [`nvm`](https://github.com/nvm-sh/nvm), you can run `nodenv install` in the
-> root of your repository to install the version specified in
-> [`package.json`](./package.json). Otherwise, 20.x or later should work!
+## Usage
 
 1. :hammer_and_wrench: Install the dependencies
 
    ```bash
-   npm install
+    - name: Run Workflow
+      id: write_base64_file
+      uses: swisyn/base64-to-file@v1
+      with:
+        destinationFileName: 'myTemporaryBase64File.txt'
+        destinationPath: './main/folder/'
+        encodedString: ${{ secrets.ENCODED_BASE64_STRING }}
    ```
 
-1. :building_construction: Package the JavaScript for distribution
+By default, this function writes the `destinationFileName` to a temporary path defined by env.RUNNER_TEMP. If you prefer a different writable path, you can specify `destinationPath` as an input argument. In this case, `destinationPath` and `destinationFileName` will be merged to form the path where the output will be saved. It's important to note that this operation assumes correct permissions in the `destinationPath` and does not attempt to modify them.
+
+## Using the output
+
+The Action provides an output variable called `filePath`, which you can utilize as the file is written to TEMP. Ensure you include an id in your step when employing this Action, enabling easy retrieval from the steps context later on.
 
    ```bash
-   npm run bundle
+    - name: Run Workflow
+      id: write_base64_file
+      uses: swisyn/base64-to-file@v1
+      with:
+        destinationFileName: 'myTemporaryBase64File.txt'
+        encodedString: ${{ secrets.ENCODED_BASE64_STRING }}
+
+    - name: Next step
+      uses: actions/someaction@v1
+      with:
+          filelocation: ${{ steps.write_base64_file.outputs.filePath }}
    ```
-
-1. :white_check_mark: Run the tests
-
-   ```bash
-   $ npm test
-
-   PASS  ./index.test.js
-     ✓ throws invalid number (3ms)
-     ✓ wait 500 ms (504ms)
-     ✓ test runs (95ms)
-
-   ...
-   ```
-
-## Update the Action Metadata
-
-The [`action.yml`](action.yml) file defines metadata about your action, such as
-input(s) and output(s). For details about this file, see
-[Metadata syntax for GitHub Actions](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions).
-
-When you copy this repository, update `action.yml` with the name, description,
-inputs, and outputs for your action.
 
 ## Update the Action Code
 
