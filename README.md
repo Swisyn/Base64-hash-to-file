@@ -7,7 +7,7 @@ Utilize this action if you need to retrieve a file from a base64-encoded string 
    ```yaml
     - name: Run Workflow
       id: write_base64_file
-      uses: swisyn/base64-to-file@v1
+      uses: Swisyn/base64-hash-to-file@v1
       with:
         destinationFileName: 'myTemporaryBase64File.txt'
         destinationPath: './main/folder/'
@@ -23,7 +23,7 @@ The Action provides an output variable called `filePath`, which you can utilize 
    ```yaml
     - name: Run Workflow
       id: write_base64_file
-      uses: swisyn/base64-to-file@v1
+      uses: Swisyn/base64-hash-to-file@v1
       with:
         destinationFileName: 'myTemporaryBase64File.txt'
         encodedString: ${{ secrets.ENCODED_BASE64_STRING }}
