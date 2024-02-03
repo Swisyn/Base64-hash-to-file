@@ -4,8 +4,6 @@ Utilize this action if you need to retrieve a file from a base64-encoded string 
 
 ## Usage
 
-1. :hammer_and_wrench: Install the dependencies
-
    ```yaml
     - name: Run Workflow
       id: write_base64_file
